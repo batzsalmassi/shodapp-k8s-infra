@@ -68,7 +68,7 @@ variable "eks_node_min_size" {
 }
 
 variable "personal_aws_access_key" {
-  description = "value of the personal AWS access key."
+  description = "value of the personal AWS access key"
   type        = string
 }
 
