@@ -62,3 +62,4 @@ override.tf.json
 terraform.rc
 /terraform/.terraform*
 /terraform/backend.tf
+/terraform/argocd_app.tf
