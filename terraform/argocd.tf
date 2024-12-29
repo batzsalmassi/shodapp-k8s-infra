@@ -11,7 +11,7 @@ resource "helm_release" "argocd" {
   repository       = "https://argoproj.github.io/argo-helm"
   chart            = "argo-cd"
   namespace        = kubernetes_namespace.argocd.metadata[0].name
-  create_namespace = false  # We create the namespace separately
+  create_namespace = false # We create the namespace separately
   version          = "4.5.2"
 
   values = [
@@ -78,7 +78,7 @@ data "aws_lb" "argocd" {
 
 # Add a delay to wait for ALB creation
 resource "time_sleep" "wait_for_argocd_alb" {
-  depends_on = [helm_release.argocd]
+  depends_on      = [helm_release.argocd]
   create_duration = "30s"
 }
 

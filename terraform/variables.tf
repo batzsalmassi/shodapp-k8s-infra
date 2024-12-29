@@ -1,7 +1,7 @@
 variable "aws_region" {
   description = "The AWS region to deploy the resources"
   type        = string
-  default = "us-east-1"
+  default     = "us-east-1"
 }
 
 variable "vpc_cidr" {
@@ -11,18 +11,18 @@ variable "vpc_cidr" {
 
 variable "private_subnets" {
   type    = list(string)
-  default = [ "10.10.1.0/24", "10.10.2.0/24", "10.10.3.0/24" ]
+  default = ["10.10.1.0/24", "10.10.2.0/24", "10.10.3.0/24"]
 }
 
 variable "public_subnets" {
   type    = list(string)
-  default = [ "10.10.4.0/24", "10.10.5.0/24", "10.10.6.0/24" ]
+  default = ["10.10.4.0/24", "10.10.5.0/24", "10.10.6.0/24"]
 }
 
 variable "db_username" {
   description = "The username for the PostgreSQL database"
   type        = string
-  default = "postgres"
+  default     = "postgres"
 }
 
 variable "db_password" {
@@ -34,37 +34,37 @@ variable "db_password" {
 variable "eks_cluster_name" {
   description = "The name of the EKS cluster"
   type        = string
-  default = "shodapp-eks-cluster"
+  default     = "shodapp-eks-cluster"
 }
 
 variable "eks_node_group_name" {
   description = "The name of the EKS node group"
   type        = string
-  default = "shodapp-eks-nodes"
+  default     = "shodapp-eks-nodes"
 }
 
 variable "eks_node_instance_type" {
   description = "The instance type for the EKS nodes"
   type        = string
-  default = "t3.medium"
+  default     = "t3.medium"
 }
 
 variable "eks_node_desired_size" {
   description = "The desired number of nodes in the EKS node group"
   type        = number
-  default = 3
+  default     = 2
 }
 
 variable "eks_node_max_size" {
   description = "The maximum number of nodes in the EKS node group"
   type        = number
-  default = 5
+  default     = 5
 }
 
 variable "eks_node_min_size" {
   description = "The minimum number of nodes in the EKS node group"
   type        = number
-  default = 1
+  default     = 1
 }
 
 variable "personal_aws_access_key" {
@@ -74,7 +74,7 @@ variable "personal_aws_access_key" {
 
 variable "personal_aws_secret_key" {
   description = "value of the personal AWS secret key"
-  type       = string
+  type        = string
 }
 
 variable "zone_id" {

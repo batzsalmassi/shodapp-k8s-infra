@@ -34,7 +34,7 @@ provider "aws" {
 
 data "aws_availability_zones" "available" {
   filter {
-    name = "opt-in-status"
+    name   = "opt-in-status"
     values = ["opt-in-not-required"]
   }
 }
@@ -62,15 +62,15 @@ module "vpc" {
     Name = "shodapp-eks-vpc"
   }
   public_subnet_tags = {
-    "Name" = "public"
-    "kubernetes.io/role/elb"                         = "1"
-    "kubernetes.io/cluster/shodapp-cluster"          = "shared"
+    "Name"                                  = "public"
+    "kubernetes.io/role/elb"                = "1"
+    "kubernetes.io/cluster/shodapp-cluster" = "shared"
   }
 
   private_subnet_tags = {
-    "Name" = "private"
-    "kubernetes.io/role/internal-elb"                = "1"
-    "kubernetes.io/cluster/shodapp-cluster"          = "shared"
+    "Name"                                  = "private"
+    "kubernetes.io/role/internal-elb"       = "1"
+    "kubernetes.io/cluster/shodapp-cluster" = "shared"
   }
 }
 

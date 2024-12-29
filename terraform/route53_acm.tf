@@ -52,7 +52,7 @@ data "aws_lb" "ingress" {
 
 # Add a delay to wait for ALB creation
 resource "time_sleep" "wait_for_alb" {
-  depends_on = [kubernetes_ingress_v1.shodapp]
+  depends_on      = [kubernetes_ingress_v1.shodapp]
   create_duration = "30s"
 }
 
