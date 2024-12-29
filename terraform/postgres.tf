@@ -44,7 +44,7 @@ resource "aws_db_instance" "postgres" {
   publicly_accessible    = true
   skip_final_snapshot    = true
   vpc_security_group_ids = [aws_security_group.postgres_sg.id]
-  db_subnet_group_name = aws_db_subnet_group.postgres_subnet_group.name
+  db_subnet_group_name   = aws_db_subnet_group.postgres_subnet_group.name
   tags = {
     Name = "postgres"
   }

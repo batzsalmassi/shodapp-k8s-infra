@@ -28,7 +28,7 @@ resource "aws_iam_role" "eks_cluster_role" {
 # Attach the AdministratorAccess policy to the EKS cluster roles
 resource "aws_iam_role_policy_attachment" "eks_cluster_admin" {
   role       = aws_iam_role.eks_cluster_role.name
-  policy_arn =  "arn:aws:iam::aws:policy/AdministratorAccess"
+  policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
 
 }
 
@@ -104,7 +104,7 @@ resource "aws_iam_role" "aws_load_balancer_controller" {
     ]
   })
 
-    depends_on = [module.eks]
+  depends_on = [module.eks]
 }
 
 # Attach the policy to the role
