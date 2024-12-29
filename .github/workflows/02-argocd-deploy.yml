@@ -1,0 +1,106 @@
+# .github/workflows/02-argocd-deploy.yml
+name: "02 - ArgoCD Deployment"
+
+on:
+  workflow_run:
+    workflows: ["01 - Terraform Infrastructure"]
+    types:
+      - completed
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  AWS_REGION: ${{ secrets.BACKEND_REGION }}
+
+jobs:
+  deploy-argocd:
+    if: |
+      github.event.workflow_run.conclusion == 'success' ||
+      github.event_name == 'workflow_dispatch'
+    name: "Deploy ArgoCD Application"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.CLOUDGURU_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.CLOUDGURU_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig --region ${{ env.AWS_REGION }} --name shodapp-cluster
+
+      - name: Wait for ArgoCD readiness
+        run: |
+          echo "Waiting for ArgoCD namespace and CRDs..."
+          attempts=0
+          max_attempts=30
+          while [ $attempts -lt $max_attempts ]; do
+            if kubectl get namespace argocd >/dev/null 2>&1 && \
+               kubectl get crd applications.argoproj.io >/dev/null 2>&1; then
+              echo "ArgoCD is ready"
+              break
+            fi
+            attempts=$((attempts + 1))
+            echo "Attempt $attempts/$max_attempts - Waiting for ArgoCD..."
+            sleep 10
+          done
+
+      - name: Deploy ArgoCD Application
+        run: |
+          cat <<EOF | kubectl apply -f -
+          apiVersion: argoproj.io/v1alpha1
+          kind: Application
+          metadata:
+            name: shodapp
+            namespace: argocd
+            finalizers:
+              - resources-finalizer.argocd.argoproj.io
+          spec:
+            project: default
+            source:
+              repoURL: https://github.com/batzsalmassi/shodapp-k8s.git
+              targetRevision: main
+              path: k8s
+            destination:
+              server: https://kubernetes.default.svc
+              namespace: shodapp
+            syncPolicy:
+              automated:
+                prune: true
+                selfHeal: true
+              syncOptions:
+                - CreateNamespace=true
+                - RespectIgnoreDifferences=true
+              retry:
+                limit: 5
+                backoff:
+                  duration: 5s
+                  factor: 2
+                  maxDuration: 3m
+          EOF
+
+      - name: Verify ArgoCD Application
+        run: |
+          echo "Verifying ArgoCD application status..."
+          attempts=0
+          max_attempts=30
+          while [ $attempts -lt $max_attempts ]; do
+            if kubectl get application shodapp -n argocd >/dev/null 2>&1; then
+              echo "ArgoCD application is deployed"
+              kubectl get application shodapp -n argocd -o jsonpath='{.status.health.status}'
+              kubectl get application shodapp -n argocd -o jsonpath='{.status.sync.status}'
+              break
+            fi
+            attempts=$((attempts + 1))
+            echo "Attempt $attempts/$max_attempts - Waiting for application..."
+            sleep 10
+          done
