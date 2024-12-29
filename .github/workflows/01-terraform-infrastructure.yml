@@ -87,7 +87,7 @@ jobs:
 
       - name: Terraform Plan
         id: plan
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
         working-directory: ./terraform
         env:
           SHODAN_API_KEY: ${{ secrets.SHODAN_API_KEY }}
@@ -107,7 +107,7 @@ jobs:
             -out=tfplan
 
       - name: Show Terraform Plan
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
         working-directory: ./terraform
         run: |
           if [ -f tfplan ]; then
@@ -129,7 +129,7 @@ jobs:
 
       - name: Summarize Terraform Plan
         id: plan_summary
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
         working-directory: ./terraform
         run: |
           # Disable 'set -e' to handle grep exit codes manually
@@ -167,14 +167,14 @@ jobs:
           fi
 
       - name: Log Plan Summary
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
         run: |
           echo "Resources to add: ${{ steps.plan_summary.outputs.RESOURCES_ADDED }}"
           echo "Resources to change: ${{ steps.plan_summary.outputs.RESOURCES_CHANGED }}"
           echo "Resources to destroy: ${{ steps.plan_summary.outputs.RESOURCES_DESTROYED }}"
 
       - name: Post Plan Summary Comment
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
         uses: actions/github-script@v6
         env:
           PLAN_SUMMARY: ${{ steps.plan_summary.outputs.SUMMARY }}
@@ -220,7 +220,7 @@ jobs:
             });
 
       - name: Terraform Apply
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
         working-directory: ./terraform
         env:
           SHODAN_API_KEY: ${{ secrets.SHODAN_API_KEY }}
