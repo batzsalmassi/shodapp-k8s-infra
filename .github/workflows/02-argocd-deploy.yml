@@ -14,11 +14,11 @@ env:
   AWS_REGION: ${{ secrets.BACKEND_REGION }}
 
 jobs:
-  deploy-argocd:
+  check-and-deploy-argocd:
     if: |
       github.event.workflow_run.conclusion == 'success' ||
       github.event_name == 'workflow_dispatch'
-    name: "Deploy ArgoCD Application"
+    name: "Check and Deploy ArgoCD Application"
     runs-on: ubuntu-latest
 
     steps:
@@ -56,14 +56,29 @@ jobs:
         run: |
           aws eks update-kubeconfig --region ${{ env.AWS_REGION }} --name ${{ steps.eks_cluster_name.outputs.cluster_name }}
 
-      - name: Wait for ArgoCD readiness
+      - name: Check if ArgoCD Application exists
+        id: check_argocd
+        continue-on-error: true
         run: |
-          echo "Waiting for ArgoCD namespace and CRDs..."
+          if kubectl get application shodapp -n argocd >/dev/null 2>&1; then
+            echo "::set-output name=exists::true"
+            echo "ArgoCD application already exists"
+          else
+            echo "::set-output name=exists::false"
+            echo "ArgoCD application does not exist"
+          fi
+
+      - name: Check ArgoCD Namespace
+        id: check_namespace
+        if: steps.check_argocd.outputs.exists == 'false'
+        run: |
+          echo "Checking ArgoCD namespace and waiting if necessary..."
           attempts=0
           max_attempts=30
           while [ $attempts -lt $max_attempts ]; do
             if kubectl get namespace argocd >/dev/null 2>&1 && \
                kubectl get crd applications.argoproj.io >/dev/null 2>&1; then
+              echo "::set-output name=ready::true"
               echo "ArgoCD is ready"
               break
             fi
@@ -73,6 +88,9 @@ jobs:
           done
 
       - name: Deploy ArgoCD Application
+        if: |
+          steps.check_argocd.outputs.exists == 'false' && 
+          steps.check_namespace.outputs.ready == 'true'
         run: |
           cat <<EOF | kubectl apply -f -
           apiVersion: argoproj.io/v1alpha1
@@ -107,6 +125,7 @@ jobs:
           EOF
 
       - name: Verify ArgoCD Application
+        if: steps.check_argocd.outputs.exists == 'false'
         run: |
           echo "Verifying ArgoCD application status..."
           attempts=0
