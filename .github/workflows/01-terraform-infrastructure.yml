@@ -174,7 +174,7 @@ jobs:
           echo "Resources to destroy: ${{ steps.plan_summary.outputs.RESOURCES_DESTROYED }}"
 
       - name: Post Plan Summary Comment
-        if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+        if: github.event_name == 'pull_request'
         uses: actions/github-script@v6
         env:
           PLAN_SUMMARY: ${{ steps.plan_summary.outputs.SUMMARY }}
