@@ -32,13 +32,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.CLOUDGURU_AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Pull Terraform state (workflow run)
-        if: github.event_name == 'workflow_run'
-        run: |
-          aws s3 cp ${{ github.event.workflow_run.head_commit.message }} terraform.tfstate
-
-      - name: Pull Terraform state (manual run)
-        if: github.event_name == 'workflow_dispatch'
+      - name: Pull Terraform state
         run: |
           aws s3 cp s3://${{ secrets.BUCKET_TF_STATE }}/terraform/final-project.tfstate terraform.tfstate
 
