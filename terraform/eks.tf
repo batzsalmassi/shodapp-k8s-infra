@@ -95,6 +95,45 @@ resource "kubernetes_config_map" "shodapp" {
   ]
 }
 
+# This resource block defines a Kubernetes Ingress resource for the "shodapp" application.
+# The Ingress resource is used to manage external access to the services within the Kubernetes cluster.
+
+# Metadata section:
+# - name: The name of the Ingress resource.
+# - namespace: The namespace where the Ingress resource will be created.
+# - annotations: A set of key-value pairs to configure the behavior of the AWS Application Load Balancer (ALB).
+
+# Annotations:
+# - kubernetes.io/ingress.class: Specifies that the Ingress resource should use the ALB ingress controller.
+# - alb.ingress.kubernetes.io/scheme: Sets the ALB scheme to "internet-facing" for public access.
+# - alb.ingress.kubernetes.io/target-type: Specifies that the ALB should target IP addresses.
+# - alb.ingress.kubernetes.io/listen-ports: Configures the ALB to listen on ports 80 (HTTP) and 443 (HTTPS).
+# - alb.ingress.kubernetes.io/certificate-arn: Specifies the ARN of the ACM certificate for HTTPS.
+# - alb.ingress.kubernetes.io/ssl-redirect: Redirects HTTP traffic to HTTPS on port 443.
+# - alb.ingress.kubernetes.io/group.name: Groups multiple Ingress resources under the name "shodapp".
+# - alb.ingress.kubernetes.io/group.order: Sets the order of the Ingress resource within the group.
+# - alb.ingress.kubernetes.io/target-group-attributes: Enables stickiness with load balancer cookies.
+# - alb.ingress.kubernetes.io/backend-protocol: Specifies the backend protocol as HTTP.
+# - alb.ingress.kubernetes.io/success-codes: Defines the success response codes for health checks.
+# - alb.ingress.kubernetes.io/healthcheck-path: Sets the path for health checks.
+# - alb.ingress.kubernetes.io/healthcheck-interval-seconds: Interval between health checks.
+# - alb.ingress.kubernetes.io/healthcheck-timeout-seconds: Timeout for each health check.
+# - alb.ingress.kubernetes.io/healthy-threshold-count: Number of successful health checks before considering the target healthy.
+# - alb.ingress.kubernetes.io/unhealthy-threshold-count: Number of failed health checks before considering the target unhealthy.
+# - alb.ingress.kubernetes.io/load-balancer-attributes: Configures ALB attributes such as idle timeout and HTTP/2 support.
+
+# Spec section:
+# - rule: Defines the routing rules for the Ingress resource.
+# - host: Specifies the host for the Ingress resource.
+# - http: Defines the HTTP paths and their corresponding backend services.
+
+# Paths:
+# - /api/*: Routes API requests to the "shodapp-backend-svc" service on port 5055.
+# - /*: Routes all other requests to the "shodapp-frontend-svc" service on port 3000.
+# - /metrics: Routes metrics requests to the "shodapp-frontend-svc" service on port 3000.
+
+# Depends_on section:
+# - Ensures that the Ingress resource is created after the AWS Load Balancer Controller Helm release and the "shodapp" namespace.
 resource "kubernetes_ingress_v1" "shodapp" {
   metadata {
     name      = "shodapp-ingress"
