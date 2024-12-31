@@ -47,11 +47,6 @@ jobs:
         run: |
           echo "::set-output name=cluster_name::$(jq -r '.outputs.eks_cluster_name.value' terraform.tfstate)"
 
-      - name: Extract EKS cluster endpoint
-        id: eks_cluster_endpoint
-        run: |
-          echo "::set-output name=cluster_endpoint::$(jq -r '.outputs.eks_cluster_endpoint.value' terraform.tfstate)"
-
       - name: Install kubectl
         uses: azure/setup-kubectl@v3
         with:
