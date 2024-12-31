@@ -95,7 +95,7 @@ jobs:
           TF_VAR_personal_aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           TF_VAR_db_password: ${{ secrets.DB_PASSWORD }}
           TF_VAR_JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-          TF_VAR_zone_id: ${{ secrets.ROUTE_53_ZONE_ID }}
+          TF_VAR_zone_id: ${{ secrets.ZONE_ID }}
         run: |
           terraform plan -no-color -input=false \
             -var "SHODAN_API_KEY=$SHODAN_API_KEY" \
@@ -117,8 +117,8 @@ jobs:
               grep -vE '(access_key|secret_key|api_key|zone_id|db_password|JWT_SECRET).*= ' tfplan > plan_output.txt
               echo "Note: Some information has been removed to protect sensitive data." >> plan_output.txt
             fi
-            sed 's/\(access_key\|secret_key\|api_key\|db_password\|zone\|JWT_SECRET\).*= "[^"]*"/\1 = <redacted>/g' plan_output.txt > redacted_plan.txt
-            if grep -qE '(AWS_ACCESS_KEY_ID|AWS_SECRET_ACCESS_KEY|DB_PASSWORD|JWT_SECRET_KEY|ROUTE_53_ZONE_ID)' redacted_plan.txt; then
+            sed 's/\(access_key\|secret_key\|api_key\|db_password\|zone_id\|JWT_SECRET\).*= "[^"]*"/\1 = <redacted>/g' plan_output.txt > redacted_plan.txt
+            if grep -qE '(AWS_ACCESS_KEY_ID|AWS_SECRET_ACCESS_KEY|DB_PASSWORD|JWT_SECRET_KEY|ZONE_ID)' redacted_plan.txt; then
               echo "Error: Sensitive information detected in plan output" > redacted_plan.txt
             elif [ ! -s redacted_plan.txt ]; then
               echo "No changes detected in the plan" > redacted_plan.txt
@@ -228,7 +228,7 @@ jobs:
           TF_VAR_personal_aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           TF_VAR_db_password: ${{ secrets.DB_PASSWORD }}
           TF_VAR_JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-          TF_VAR_zone_id: ${{ secrets.ROUTE_53_ZONE_ID }}
+          TF_VAR_zone_id: ${{ secrets.ZONE_ID }}
         run: |
           # Always create a fresh plan
           terraform plan -no-color -input=false \
