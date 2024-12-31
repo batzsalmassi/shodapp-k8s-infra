@@ -22,12 +22,35 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.CLOUDGURU_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.CLOUDGURU_AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
+
+      - name: Pull Terraform state (workflow run)
+        if: github.event_name == 'workflow_run'
+        run: |
+          aws s3 cp ${{ github.event.workflow_run.head_commit.message }} terraform.tfstate
+
+      - name: Pull Terraform state (manual run)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          aws s3 cp s3://${{ secrets.BUCKET_TF_STATE }}/terraform/final-project.tfstate terraform.tfstate
+
+      - name: Extract EKS cluster name
+        id: eks_cluster_name
+        run: |
+          echo "::set-output name=cluster_name::$(jq -r '.outputs.eks_cluster_name.value' terraform.tfstate)"
+
+      - name: Extract EKS cluster endpoint
+        id: eks_cluster_endpoint
+        run: |
+          echo "::set-output name=cluster_endpoint::$(jq -r '.outputs.eks_cluster_endpoint.value' terraform.tfstate)"
 
       - name: Install kubectl
         uses: azure/setup-kubectl@v3
@@ -36,7 +59,7 @@ jobs:
 
       - name: Update kubeconfig
         run: |
-          aws eks update-kubeconfig --region ${{ env.AWS_REGION }} --name shodapp-cluster
+          aws eks update-kubeconfig --region ${{ env.AWS_REGION }} --name ${{ steps.eks_cluster_name.outputs.cluster_name }}
 
       - name: Wait for ArgoCD readiness
         run: |
