@@ -2,6 +2,10 @@
 
 This repository contains the Terraform configuration files for setting up the infrastructure of the Shodapp project on AWS. The infrastructure includes an EKS cluster, PostgreSQL database, ACM certificates, Route 53 DNS records, and ArgoCD for continuous deployment.
 
+This Terraform configuration is used to deploy the infrastructure on a CloudGuru sandbox account. It uses cross-account access to perform ACM validation and create the CNAME and A records for the ALB in a personal AWS account that hosts the domain.
+
+Sensitive data such as AWS credentials, database passwords, and API keys are managed using GitHub repository secrets. If you fork this repository, make sure to update these secrets in your forked repository to match your environment.
+
 ## Table of Contents
 
 - [Prerequisites](#prerequisites)
