@@ -59,82 +59,37 @@ Sensitive data such as AWS credentials, database passwords, and API keys are man
 
 This file contains the main configuration for the Terraform project, including provider configurations and the VPC module.
 
-```terraform
-// filepath: /Users/sean.salmassi/github-Repos/shodapp-k8s-infra/terraform/main.tf
-// ...existing code...
-```
-
 ### route53_acm.tf
 
 This file sets up the ACM certificate and Route 53 DNS records for domain validation and ALB configuration.
-
-```terraform
-// filepath: /Users/sean.salmassi/github-Repos/shodapp-k8s-infra/terraform/route53_acm.tf
-// ...existing code...
-```
 
 ### postgres.tf
 
 This file configures the PostgreSQL database instance, including subnet and security group settings.
 
-```terraform
-// filepath: /Users/sean.salmassi/github-Repos/shodapp-k8s-infra/terraform/postgres.tf
-// ...existing code...
-```
-
 ### outputs.tf
 
 This file defines the outputs for the Terraform project, such as the PostgreSQL endpoint and ACM certificate ARN.
-
-```terraform
-// filepath: /Users/sean.salmassi/github-Repos/shodapp-k8s-infra/terraform/outputs.tf
-// ...existing code...
-```
 
 ### iam.tf
 
 This file sets up the IAM roles and policies required for the EKS cluster and AWS Load Balancer Controller.
 
-```terraform
-// filepath: /Users/sean.salmassi/github-Repos/shodapp-k8s-infra/terraform/iam.tf
-// ...existing code...
-```
-
 ### argocd.tf
 
 This file configures the ArgoCD deployment using Helm and sets up the necessary Route 53 DNS records.
-
-```terraform
-// filepath: /Users/sean.salmassi/github-Repos/shodapp-k8s-infra/terraform/argocd.tf
-// ...existing code...
-```
 
 ### helm.tf
 
 This file configures the Helm provider and installs the AWS Load Balancer Controller using Helm.
 
-```terraform
-// filepath: /Users/sean.salmassi/github-Repos/shodapp-k8s-infra/terraform/helm.tf
-// ...existing code...
-```
-
 ### eks.tf
 
 This file sets up the EKS cluster, including managed node groups and Kubernetes resources.
 
-```terraform
-// filepath: /Users/sean.salmassi/github-Repos/shodapp-k8s-infra/terraform/eks.tf
-// ...existing code...
-```
-
 ### variables.tf
 
 This file defines the variables used in the Terraform project, such as AWS region, VPC CIDR, and EKS cluster settings.
-
-```terraform
-// filepath: /Users/sean.salmassi/github-Repos/shodapp-k8s-infra/terraform/variables.tf
-// ...existing code...
-```
 
 ## GitHub Actions Workflows
 
@@ -142,16 +97,6 @@ This file defines the variables used in the Terraform project, such as AWS regio
 
 This workflow handles the Terraform plan and apply process, triggered by pull requests and pushes to the main branch.
 
-```yaml
-// filepath: /Users/sean.salmassi/github-Repos/shodapp-k8s-infra/.github/workflows/01-terraform-infrastructure.yml
-// ...existing code...
-```
-
 ### 02-argocd-deploy.yml
 
 This workflow deploys the ArgoCD application after the Terraform infrastructure has been successfully applied.
-
-```yaml
-// filepath: /Users/sean.salmassi/github-Repos/shodapp-k8s-infra/.github/workflows/02-argocd-deploy.yml
-// ...existing code...
-```
