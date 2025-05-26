@@ -52,7 +52,7 @@ jobs:
           terraform {
             backend "s3" {
               bucket = "${{ secrets.BUCKET_TF_STATE }}"
-              key    = "terraform/final-project.tfstate"
+              key    = "terraform/shodapp-k8s-infra.tfstate"
               region = "${{ env.AWS_REGION }}"
             }
           }

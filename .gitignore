@@ -63,3 +63,6 @@ terraform.rc
 /terraform/.terraform*
 /terraform/backend.tf
 /terraform/argocd_app.tf
+
+# Ignore local environment variable setup scripts
+run-terraform-plan.sh

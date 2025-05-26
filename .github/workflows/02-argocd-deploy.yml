@@ -34,7 +34,7 @@ jobs:
 
       - name: Pull Terraform state
         run: |
-          aws s3 cp s3://${{ secrets.BUCKET_TF_STATE }}/terraform/final-project.tfstate terraform.tfstate
+          aws s3 cp s3://${{ secrets.BUCKET_TF_STATE }}/terraform/shodapp-k8s-infra.tfstate terraform.tfstate
 
       - name: Extract EKS cluster name
         id: eks_cluster_name
